@@ -94,16 +94,8 @@ app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
         if (err) throw err;
         res.send(result);
     });
-})
-//endpoint for total like count 
-app.get('/posts/:post_id/like', bodyParser.json(), function (req, res) {
-    const post_id = req.params.post_id;
-    const sql = `SELECT * as like FROM post_like WHERE post_id = ('${req.params.post_id})`;
-    con.query(sql, [post_id], function (err, result) {
-        if (err) throw err;
-        res.send(result);
-    });
-})
+});
+
 app.listen(3000), console.log("server is running at port 3000")
 
 
