@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "devstart": "nodemon server.js",
     "start": "node server.js",
-    "build":"npm run build"
+    "build": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,5 @@
     "mysql2": "^3.9.2",
     "nodemon": "^3.1.0"
   },
-  "devDependencies": {},
   "description": ""
 }

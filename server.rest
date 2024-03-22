@@ -66,12 +66,3 @@ Content-Type: application/json
     "user_id":1
 }
 
-###
-POST http://localhost:3000/send-message/:sender_id/:receiver_id
-Content-Type: application/json
-
-{
-    "message":"my message",
-    "sender_id":""
-    "receiver_id":
-}

@@ -5,6 +5,7 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 
 const app = express();
+app.use(cors());
 /**********************connecting my Database cred************* */
 const con = mysql.createConnection({
     host: "srv1107.hstgr.io",
@@ -102,16 +103,6 @@ app.get('/posts/:post_id/like', bodyParser.json(), function (req, res) {
         if (err) throw err;
         res.send(result);
     });
-})
-// Endpoint to send a message
-app.post('/send-message/:sender_id/:receiver_id', function (req, res) {
-    const sender_id = req.params.sender_id;
-    const receiver_id = req.params.receiver_id;
-    const { message } = req.body;
-    const sql = `INSERT INTO messages(sender_id, receiver_id, message) VALUES(?, ?, ?)`;
-    con.query(sql, [sender_id, receiver_id, message], function (err, result) {
-    });
-
 })
 app.listen(3000), console.log("server is running at port 3000")
 
