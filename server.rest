@@ -1,0 +1,59 @@
+###
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+ "Firstname":"marvellouss",
+ "Lastname":"udeh",
+ "Dateofbirth":"2002-10-06",
+ "EmailAddress":"kenedy1@gmail.com",
+ "Pass":"1234meeeec" 
+}
+
+###
+GET http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "EmailAddress":"kennedymarvellous1@gmail.com",
+    "Pass":"1234marve"
+} 
+
+###
+GET http://localhost:3000/getuser/id
+
+###
+POST http://localhost:3000/createpost/:13
+Content-Type: application/json
+
+{
+    "title":"hello",
+    "content":"this is a content"
+}
+
+###
+PUT http://localhost:3000/updatepost/13
+Content-Type: application/json
+
+{
+    "title":"my tittle",
+    "content":"this is my content"
+}
+
+###
+DELETE http://localhost:3000/deletepost/:1
+Content-Type: application/json
+
+{
+    "title":"my tittle",
+    "content":"this is my content"
+
+}
+
+###
+POST http://localhost:3000/comments/:post_id
+Content-Type: application/json
+
+{
+    "content":"this is my comment"
+}
