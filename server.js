@@ -74,18 +74,45 @@ app.delete("/deletepost/:id", function (req, res) {
         res.send(result);
     });
 });
-
-//creating endpoint for post including comments
-app.post("/comments/:post_id", bodyParser.json(), function (req, res) {
-    const post_id = req.params.id;
-    const { content, } = req.body;
-    const sql = "INSERT INTO comments(post_id, content,) VALUES (?, ?,)";
-    const values = [post_id, content,];
-    con.query(sql, values, function (err, result) {
+// endpoint for commenting on a post
+app.post('/posts/:post_id/comments', bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
+    const { content } = req.body;
+    const sql = `INSERT INTO comments (post_id, content) VALUES (?, ?)`;
+    con.query(sql, [post_id, content], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
 });
+//endpoint for liking posts
+app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
+    const user_id = req.body.user_id;
+    const sql = `INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)`;
+    con.query(sql, [post_id, user_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+})
+//endpoint for total like count 
+app.get('/posts/:post_id/like', bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
+    const sql = `SELECT * as like FROM post_like WHERE post_id = ('${req.params.post_id})`;
+    con.query(sql, [post_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+})
+// Endpoint to send a message
+app.post('/send-message/:sender_id/:receiver_id', function (req, res) {
+    const sender_id = req.params.sender_id;
+    const receiver_id = req.params.receiver_id;
+    const { message } = req.body;
+    const sql = `INSERT INTO messages(sender_id, receiver_id, message) VALUES(?, ?, ?)`;
+    con.query(sql, [sender_id, receiver_id, message], function (err, result) {
+    });
+
+})
 app.listen(3000), console.log("server is running at port 3000")
 
 

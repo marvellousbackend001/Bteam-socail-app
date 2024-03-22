@@ -3,11 +3,11 @@ POST http://localhost:3000/signup
 Content-Type: application/json
 
 {
- "Firstname":"marvellouss",
- "Lastname":"udeh",
+ "Firstname":"marss",
+ "Lastname":"ueh",
  "Dateofbirth":"2002-10-06",
- "EmailAddress":"kenedy1@gmail.com",
- "Pass":"1234meeeec" 
+ "EmailAddress":"kenedy100@gmail.com",
+ "Pass":"1234mec" 
 }
 
 ###
@@ -23,7 +23,7 @@ Content-Type: application/json
 GET http://localhost:3000/getuser/id
 
 ###
-POST http://localhost:3000/createpost/:13
+POST http://localhost:3000/createpost/:2
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/updatepost/13
+PUT http://localhost:3000/updatepost/2
 Content-Type: application/json
 
 {
@@ -51,9 +51,27 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/comments/:post_id
+POST http://localhost:3000/posts/2/comments
+Content-Type: application/json
+
+{ 
+    "content":"This is a comment."
+}
+
+###
+POST http://localhost:3000/posts/2/like
 Content-Type: application/json
 
 {
-    "content":"this is my comment"
+    "user_id":1
+}
+
+###
+POST http://localhost:3000/send-message/:sender_id/:receiver_id
+Content-Type: application/json
+
+{
+    "message":"my message",
+    "sender_id":""
+    "receiver_id":
 }
