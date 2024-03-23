@@ -27,7 +27,7 @@ app.post("/signup", bodyparser.json(), function (req, res) {
 //creating an endpoint for login
 app.get("/login", bodyparser.json(), function (req, res) {
     var sql = `SELECT * FROM users
-    WHERE EmailAddress ='${req.body.EmailAddress}' AND Pass ='${req.body.Pass}' `
+    WHERE EmailAddress ='${req.body.EmailAddress}' AND Pass ='${req.body.Pass}' `;
     con.query(sql, function (err, result) {
         if (err) throw err
         res.send(result);
@@ -49,7 +49,7 @@ app.get("/getuser/id", bodyParser.json(), function (req, res) {
 app.post("/createpost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body
-    const sql = `INSERT INTO posts (id, title, content) VALUES (?, ?, ?)`;
+    const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}', '${title}', '${content}')`;
     con.query(sql, [postid, title, content], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -60,7 +60,7 @@ app.post("/createpost/:id", bodyParser.json(), function (req, res) {
 app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body;
-    const sql = `UPDATE posts SET title = ?, content = ? WHERE id = ?`;
+    const sql = `UPDATE posts SET title = '${title}', content = '${content}' WHERE id = '${postid}'`;
     con.query(sql, [title, content, postid], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -69,7 +69,7 @@ app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
 // Endpoint for deleting a post by ID
 app.delete("/deletepost/:id", function (req, res) {
     const postid = req.params.id;
-    const sql = `DELETE FROM posts WHERE id = ?`;
+    const sql = `DELETE FROM posts WHERE id = '${postid}'`;
     con.query(sql, [postid], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -89,7 +89,7 @@ app.post('/posts/:post_id/comments', bodyParser.json(), function (req, res) {
 app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
     const user_id = req.body.user_id;
-    const sql = `INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)`;
+    const sql = `INSERT INTO post_likes (post_id, user_id) VALUES ('${post_id}', '${user_id}')`
     con.query(sql, [post_id, user_id], function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -98,7 +98,7 @@ app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
 //creating an endpoint for getting total like count
 app.get('/posts/:post_id/like/count', function (req, res) {
     const post_id = req.params.post_id;
-    const sql = `SELECT COUNT (*) AS like_count FROM post_likes WHERE post_id = ?`;
+    const sql = `SELECT COUNT (*) AS like_count FROM post_likes WHERE post_id = '${post_id}'`;
     con.query(sql, [post_id], function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -106,18 +106,10 @@ app.get('/posts/:post_id/like/count', function (req, res) {
 });
 //endpoint for sending messages
 app.post("/messages/send", bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
     const { sender_id, receiver_id, message } = req.body;
-    const sql = `INSERT INTO messages (sender_id, receiver_id, message) VALUES (?,?,?)`;
+    const sql = `INSERT INTO messages (sender_id, receiver_id, message) VALUES ('${sender_id}','${receiver_id}','${post_id}')`;
     con.query(sql, [sender_id, receiver_id, message], function (err, result) {
-        if (err) throw err;
-        res.send(result);
-    });
-})
-// Endpoint for getting messages between two users
-app.get('/get-messages/:sender_id/:receiver_id', (req, res) => {
-    const { sender_id, receiver_id } = req.params;
-    const sql = `SELECT * FROM messages WHERE (sender_id = ${sender_id} AND receiver_id = ${receiver_id}) OR (sender_id = ${receiver_id} AND receiver_id = ${sender_id})`;
-    con.query(sql, (err, results) => {
         if (err) throw err;
         res.send(result);
     });

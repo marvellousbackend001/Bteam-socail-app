@@ -79,11 +79,3 @@ Content-Type: application/json
  "receiver_id": 2,
  "message": "Hello, this is a test message."
 }
-
-###
-GET http://localhost:/get-messages/:sender_id/:receiver_id
-Content-Type: application/json
-
-{
-
-}
