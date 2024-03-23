@@ -96,14 +96,32 @@ app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
     });
 });
 //creating an endpoint for getting total like count
-app.get('/posts/:post_id/like/count', function(req, res) {
+app.get('/posts/:post_id/like/count', function (req, res) {
     const post_id = req.params.post_id;
-    const sql = `SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = ?`;
-    con.query(sql, [post_id], function(err, result) {
+    const sql = `SELECT COUNT (*) AS like_count FROM post_likes WHERE post_id = ?`;
+    con.query(sql, [post_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+//endpoint for sending messages
+app.post("/messages/send", bodyParser.json(), function (req, res) {
+    const { sender_id, receiver_id, message } = req.body;
+    const sql = `INSERT INTO messages (sender_id, receiver_id, message) VALUES (?,?,?)`;
+    con.query(sql, [sender_id, receiver_id, message], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
 })
+// Endpoint for getting messages between two users
+app.get('/get-messages/:sender_id/:receiver_id', (req, res) => {
+    const { sender_id, receiver_id } = req.params;
+    const sql = `SELECT * FROM messages WHERE (sender_id = ${sender_id} AND receiver_id = ${receiver_id}) OR (sender_id = ${receiver_id} AND receiver_id = ${sender_id})`;
+    con.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 app.listen(3000), console.log("server is running at port 3000")
 
 

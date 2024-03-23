@@ -70,3 +70,20 @@ Content-Type: application/json
 GET http://localhost:3000/posts/:post_id/like/count
 Content-Type: application/json
 
+###
+POST http://localhost:3000/messages/send
+Content-Type: application/json
+
+{
+ "sender_id": 1,
+ "receiver_id": 2,
+ "message": "Hello, this is a test message."
+}
+
+###
+GET http://localhost:/get-messages/:sender_id/:receiver_id
+Content-Type: application/json
+
+{
+
+}
