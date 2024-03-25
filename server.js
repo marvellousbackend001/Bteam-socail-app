@@ -127,6 +127,9 @@ app.post("/messages/send", bodyParser.json(), function (req, res) {
         res.send(result);
     });
 });
+
+// providing an endpoint for retrieving chats between two users
+
 app.listen(3000), console.log("server is running at port 3000")
 
 
