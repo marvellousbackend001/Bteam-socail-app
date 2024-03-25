@@ -3,11 +3,11 @@ POST http://localhost:3000/signup
 Content-Type: application/json
 
 {
- "Firstname":"marss",
- "Lastname":"ueh",
+ "Firstname":"ifeoluwa",
+ "Lastname":"blessing",
  "Dateofbirth":"2002-10-06",
- "EmailAddress":"kenedy100@gmail.com",
- "Pass":"1234mec" 
+ "EmailAddress":"kene100@gmail.com",
+ "Pass":"1234meclll" 
 }
 
 ###
@@ -77,5 +77,15 @@ Content-Type: application/json
 {
  "sender_id": 1,
  "receiver_id": 2,
+ "message": "Hello, this is a test message."
+}
+
+###
+POST http://localhost:3000/messages/send
+Content-Type: application/json
+
+{
+ "sender_id": 2,
+ "receiver_id": 1,
  "message": "Hello, this is a test message."
 }

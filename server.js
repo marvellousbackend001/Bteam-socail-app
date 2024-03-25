@@ -18,7 +18,11 @@ const con = mysql.createConnection({
 //creating an endpoint for signup
 app.post("/signup", bodyparser.json(), function (req, res) {
     var sql = `INSERT INTO users(Firstname,Lastname,Dateofbirth,EmailAddress,Pass)
-     VALUES('${req.body.Firstname}','${req.body.Lastname}','${req.body.Dateofbirth}','${req.body.EmailAddress}','${req.body.Pass}')`;
+     VALUES('${req.body.Firstname}',
+     '${req.body.Lastname}',
+     '${req.body.Dateofbirth}',
+     '${req.body.EmailAddress}',
+     '${req.body.Pass}')`;
     con.query(sql, function (err, result) {
         if (err) throw err
         res.send(result);
@@ -27,7 +31,8 @@ app.post("/signup", bodyparser.json(), function (req, res) {
 //creating an endpoint for login
 app.get("/login", bodyparser.json(), function (req, res) {
     var sql = `SELECT * FROM users
-    WHERE EmailAddress ='${req.body.EmailAddress}' AND Pass ='${req.body.Pass}' `;
+    WHERE EmailAddress ='${req.body.EmailAddress}'
+     AND Pass ='${req.body.Pass}' `;
     con.query(sql, function (err, result) {
         if (err) throw err
         res.send(result);
@@ -35,7 +40,7 @@ app.get("/login", bodyparser.json(), function (req, res) {
 });
 
 
-//creating an endpoint for getuserid
+//creating an endpoint for getuser ID
 app.get("/getuser/id", bodyParser.json(), function (req, res) {
     const sql = `SELECT id FROM users`
     con.query(sql, function (err, result) {
@@ -49,7 +54,9 @@ app.get("/getuser/id", bodyParser.json(), function (req, res) {
 app.post("/createpost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body
-    const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}', '${title}', '${content}')`;
+    const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}',
+     '${title}',
+      '${content}')`;
     con.query(sql, [postid, title, content], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -60,7 +67,9 @@ app.post("/createpost/:id", bodyParser.json(), function (req, res) {
 app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body;
-    const sql = `UPDATE posts SET title = '${title}', content = '${content}' WHERE id = '${postid}'`;
+    const sql = `UPDATE posts SET title = '${title}', 
+    content = '${content}'
+     WHERE id = '${postid}'`;
     con.query(sql, [title, content, postid], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -79,7 +88,8 @@ app.delete("/deletepost/:id", function (req, res) {
 app.post('/posts/:post_id/comments', bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
     const { content } = req.body;
-    const sql = `INSERT INTO comments (post_id, content) VALUES (?, ?)`;
+    const sql = `INSERT INTO comments (post_id, content) 
+    VALUES (?, ?)`;
     con.query(sql, [post_id, content], function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -89,7 +99,8 @@ app.post('/posts/:post_id/comments', bodyParser.json(), function (req, res) {
 app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
     const user_id = req.body.user_id;
-    const sql = `INSERT INTO post_likes (post_id, user_id) VALUES ('${post_id}', '${user_id}')`
+    const sql = `INSERT INTO post_likes (post_id, user_id)
+     VALUES ('${post_id}', '${user_id}')`
     con.query(sql, [post_id, user_id], function (err, result) {
         if (err) throw err;
         res.send(result);
@@ -108,7 +119,9 @@ app.get('/posts/:post_id/like/count', function (req, res) {
 app.post("/messages/send", bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
     const { sender_id, receiver_id, message } = req.body;
-    const sql = `INSERT INTO messages (sender_id, receiver_id, message) VALUES ('${sender_id}','${receiver_id}','${post_id}')`;
+    const sql = `INSERT INTO messages (sender_id, receiver_id, message) VALUES ('${sender_id}',
+    '${receiver_id}',
+    '${message}')`;
     con.query(sql, [sender_id, receiver_id, message], function (err, result) {
         if (err) throw err;
         res.send(result);
