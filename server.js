@@ -3,7 +3,7 @@ const cors = require("cors");
 const bodyparser = require("body-parser");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
-
+const otpGenerator = require("otp-generator");
 const app = express();
 app.use(cors());
 /**********************connecting my Database cred************* */
@@ -28,6 +28,29 @@ app.post("/signup", bodyparser.json(), function (req, res) {
         res.send(result);
     });
 });
+/**********************************email and nodemailer***************************** */
+const nodemailer = require('nodemailer');
+app.use(express.urlencoded({
+    extended: true
+}
+));
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'kennedymarvellous001@gmail.com',
+        pass: 'zceb znrq ajzh wszq'
+    }
+});
+app.post('/send-otps', (req, res) => {
+    const otp = otpGenerator.generate(6, { alphabets: false, upperCase: false, specialChars: false });
+    const now = new Date();
+    const expiration_time = new Date(now.getTime() + 5 * 60000);
+    var sql = `INSERT INTO otps (otp, expiration_time) VALUES (?, ?)`;
+    con.query(sql, [otp, expiration_time], function (err, result) {
+        if (err) throw err
+        res.send({result,otp});
+    })
+});
 //creating an endpoint for login
 app.get("/login", bodyparser.json(), function (req, res) {
     var sql = `SELECT * FROM users
@@ -39,7 +62,6 @@ app.get("/login", bodyparser.json(), function (req, res) {
     });
 });
 
-
 //creating an endpoint for getuser ID
 app.get("/getuser/id", bodyParser.json(), function (req, res) {
     const sql = `SELECT id FROM users`
@@ -48,28 +70,25 @@ app.get("/getuser/id", bodyParser.json(), function (req, res) {
         res.send(result);
     });
 });
-
-
 //creating a post endpoint for creating  new posts
 app.post("/createpost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body
-    const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}',
-     '${title}',
-      '${content}')`;
+    const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}','${title}','${content}')`;
     con.query(sql, [postid, title, content], function (err, result) {
         if (err) throw err
         res.send(result);
     });
 });
+//endpoint for getting a post by ID 
+app.get("/", bodyParser.json(), function (req, res){
 
+})
 // Endpoint for updating a post by ID
 app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const { title, content } = req.body;
-    const sql = `UPDATE posts SET title = '${title}', 
-    content = '${content}'
-     WHERE id = '${postid}'`;
+    const sql = `UPDATE posts SET title = '${title}', content = '${content}' WHERE id = '${postid}'`;
     con.query(sql, [title, content, postid], function (err, result) {
         if (err) throw err
         res.send(result);
@@ -79,7 +98,7 @@ app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
 app.delete("/deletepost/:id", function (req, res) {
     const postid = req.params.id;
     const sql = `DELETE FROM posts WHERE id = '${postid}'`;
-    con.query(sql, [postid], function (err, result) {
+    con.query(sql, function (err, result) {
         if (err) throw err
         res.send(result);
     });
@@ -91,7 +110,7 @@ app.post('/posts/:post_id/comments', bodyParser.json(), function (req, res) {
     const sql = `INSERT INTO comments (post_id, content) 
     VALUES (?, ?)`;
     con.query(sql, [post_id, content], function (err, result) {
-        if (err) throw err;
+        if (err) throw err
         res.send(result);
     });
 });
@@ -102,19 +121,20 @@ app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
     const sql = `INSERT INTO post_likes (post_id, user_id)
      VALUES ('${post_id}', '${user_id}')`
     con.query(sql, [post_id, user_id], function (err, result) {
-        if (err) throw err;
+        if (err) throw err
         res.send(result);
     });
 });
-//creating an endpoint for getting total like count
+//creating an endpoint for getting total like count 
 app.get('/posts/:post_id/like/count', function (req, res) {
     const post_id = req.params.post_id;
     const sql = `SELECT COUNT (*) AS like_count FROM post_likes WHERE post_id = '${post_id}'`;
     con.query(sql, [post_id], function (err, result) {
-        if (err) throw err;
+        if (err) throw err
         res.send(result);
     });
 });
+
 //endpoint for sending messages
 app.post("/messages/send", bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
@@ -123,13 +143,21 @@ app.post("/messages/send", bodyParser.json(), function (req, res) {
     '${receiver_id}',
     '${message}')`;
     con.query(sql, [sender_id, receiver_id, message], function (err, result) {
-        if (err) throw err;
+        if (err) throw err
         res.send(result);
     });
 });
 
 // providing an endpoint for retrieving chats between two users
-
+app.get('/get-messages/:sender_id/:receiver_id', bodyParser.json(), function (req, res) {
+    const sender_id = req.params.sender_id;
+    const receiver_id = req.params.receiver_id;
+    const sql = `SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY timestamp`;
+    con.query(sql, [sender_id, receiver_id, receiver_id, sender_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+})
 app.listen(3000), console.log("server is running at port 3000")
 
 
