@@ -32,6 +32,9 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3000/getpost/:id
+
+###
 PUT http://localhost:3000/updatepost/2
 Content-Type: application/json
 

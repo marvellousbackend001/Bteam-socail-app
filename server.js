@@ -42,13 +42,13 @@ var transporter = nodemailer.createTransport({
     }
 });
 app.post('/send-otps', (req, res) => {
-    const otp = otpGenerator.generate(6, { alphabets: false, upperCase: false, specialChars: false });
+    const otp = otpGenerator.generate(6);
     const now = new Date();
     const expiration_time = new Date(now.getTime() + 5 * 60000);
     var sql = `INSERT INTO otps (otp, expiration_time) VALUES (?, ?)`;
     con.query(sql, [otp, expiration_time], function (err, result) {
         if (err) throw err
-        res.send({result,otp});
+        res.send({ result, otp });
     })
 });
 //creating an endpoint for login
@@ -81,9 +81,14 @@ app.post("/createpost/:id", bodyParser.json(), function (req, res) {
     });
 });
 //endpoint for getting a post by ID 
-app.get("/", bodyParser.json(), function (req, res){
-
-})
+app.get('/getpost/:id', bodyParser.json(), function (req, res) {
+    const postId = req.params.id;
+    const sql = `SELECT * FROM posts WHERE id = ?`;
+    con.query(sql, [postId], function (err, result) {
+        if (err) throw err
+        res.send(result);
+    });
+});
 // Endpoint for updating a post by ID
 app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
