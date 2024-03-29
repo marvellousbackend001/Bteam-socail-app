@@ -1,4 +1,4 @@
-###
+### endpoint for signup
 POST http://localhost:3000/signup
 Content-Type: application/json
 
@@ -10,7 +10,7 @@ Content-Type: application/json
  "Pass":"1234meclll" 
 }
 
-###
+### endpoint for login
 GET http://localhost:3000/login
 Content-Type: application/json
 
@@ -19,10 +19,10 @@ Content-Type: application/json
     "Pass":"1234marve"
 } 
 
-###
+### endpoint for getting usrs by id 
 GET http://localhost:3000/getuser/id
 
-###
+### endpoint for creating posts
 POST http://localhost:3000/createpost/:2
 Content-Type: application/json
 
@@ -31,10 +31,10 @@ Content-Type: application/json
     "content":"this is a content"
 }
 
-###
+### endpoint for getting post by id 
 GET http://localhost:3000/getpost/:id
 
-###
+### endpoint for updating posts
 PUT http://localhost:3000/updatepost/2
 Content-Type: application/json
 
@@ -43,7 +43,7 @@ Content-Type: application/json
     "content":"this is my content"
 }
 
-###
+### endpoint for deleting posts
 DELETE http://localhost:3000/deletepost/:1
 Content-Type: application/json
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 }
 
-###
+### endpoint for coomenting on posts by id 
 POST http://localhost:3000/posts/2/comments
 Content-Type: application/json
 
@@ -62,7 +62,7 @@ Content-Type: application/json
     "message":"This is a comment."
 }
 
-###
+### endpoint for liking posts by id 
 POST http://localhost:3000/posts/2/like
 Content-Type: application/json
 
@@ -70,11 +70,14 @@ Content-Type: application/json
     "user_id":1
 }
 
-###
+### endpoint for getting all like count by id 
 GET http://localhost:3000/posts/:post_id/like/count
 Content-Type: application/json
 
-###
+### endpoint for getting all comment counts by id 
+GET http://localhost:3000/TotalCommentCount/2
+
+### endpoint for sending messages
 POST http://localhost:3000/messages/send
 Content-Type: application/json
 
@@ -84,25 +87,14 @@ Content-Type: application/json
  "message": "Hello, this is a test message."
 }
 
-###
-POST http://localhost:3000/messages/send
-Content-Type: application/json
-
-{
- "sender_id": 2,
- "receiver_id": 1,
- "message": "Hello, this is a test message."
-}
-
-###
+###endpoint for getting mesages of two users
 GET http://localhost:3000/get-messages/1/2
 Content-Type: application/json
 
-###
+### endpoint for sending an otp
 POST http://localhost:3000/send-otps
 Content-Type: application/json
 
 {
-    "otp":"${otp}",
-    "expiration_time":"${expiration_time}"
+    "email":"praisdania@gmail.com"
 }

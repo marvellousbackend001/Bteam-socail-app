@@ -4,6 +4,7 @@ const bodyparser = require("body-parser");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const otpGenerator = require("otp-generator");
+const nodemailer = require("nodemailer")
 const app = express();
 app.use(cors());
 /**********************connecting my Database cred************* */
@@ -28,27 +29,34 @@ app.post("/signup", bodyparser.json(), function (req, res) {
         res.send(result);
     });
 });
-/**********************************email and nodemailer***************************** */
-const nodemailer = require('nodemailer');
-app.use(express.urlencoded({
-    extended: true
-}
-));
-var transporter = nodemailer.createTransport({
+// Nodemailer transporter setup
+app.use(bodyParser.urlencoded
+    ({ extended: true }));
+const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'kennedymarvellous001@gmail.com',
         pass: 'zceb znrq ajzh wszq'
     }
 });
-app.post('/send-otps', (req, res) => {
+app.post('/send-otps', bodyParser.json(), (req, res) => {
+    const email = req.body.email;
     const otp = otpGenerator.generate(6);
     const now = new Date();
-    const expiration_time = new Date(now.getTime() + 5 * 60000);
-    var sql = `INSERT INTO otps (otp, expiration_time) VALUES (?, ?)`;
-    con.query(sql, [otp, expiration_time], function (err, result) {
+    const expirationTime = new Date(now.getTime() + 5 * 60000);
+    const sql = `INSERT INTO otps (email, otp, expiration_time) VALUES (?, ?, ?)`;
+    con.query(sql, [email, otp, expirationTime], function (err, result) {
         if (err) throw err
-        res.send({ result, otp });
+        const mailOptions = {
+            from: 'kennedymarvellous001@gmail.com',
+            to: email,
+            subject: 'Your OTP for Verification',
+            text: `Your OTP (One-Time Password) for verification is: ${otp}. It will expire at ${expirationTime}.`
+        };
+        transporter.sendMail(mailOptions, function (err, result) {
+            if (err) throw err
+            res.send({ result, otp });
+        })
     })
 });
 //creating an endpoint for login
@@ -58,7 +66,7 @@ app.get("/login", bodyparser.json(), function (req, res) {
      AND Pass ='${req.body.Pass}' `;
     con.query(sql, function (err, result) {
         if (err) throw err
-        res.send(result);
+        res.status(status).send(body);
     });
 });
 
@@ -76,15 +84,6 @@ app.post("/createpost/:id", bodyParser.json(), function (req, res) {
     const { title, content } = req.body
     const sql = `INSERT INTO posts (id, title, content) VALUES ('${postid}','${title}','${content}')`;
     con.query(sql, [postid, title, content], function (err, result) {
-        if (err) throw err
-        res.send(result);
-    });
-});
-//endpoint for getting a post by ID 
-app.get('/getpost/:id', bodyParser.json(), function (req, res) {
-    const postId = req.params.id;
-    const sql = `SELECT * FROM posts WHERE id = ?`;
-    con.query(sql, [postId], function (err, result) {
         if (err) throw err
         res.send(result);
     });
@@ -139,7 +138,15 @@ app.get('/posts/:post_id/like/count', function (req, res) {
         res.send(result);
     });
 });
-
+//creating an endpoint for getting total comment count
+app.get('/TotalCommentCount/:postId', function (req, res) {
+    var post_id = req.params.post_id;
+    var sql = 'SELECT COUNT(*) as totalComments FROM comments WHERE post_id = ?';
+    connection.query(sql, [post_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
 //endpoint for sending messages
 app.post("/messages/send", bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
