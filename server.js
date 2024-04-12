@@ -4,7 +4,8 @@ const bodyparser = require("body-parser");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const otpGenerator = require("otp-generator");
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
+const passport = require("passport");
 const app = express();
 app.use(cors());
 /**********************connecting my Database cred************* */
@@ -14,16 +15,11 @@ const con = mysql.createConnection({
     password: "Marvelous12344",
     database: "u532672005_marvelousBE",
     port: "3306",
-})
-
+});
 //creating an endpoint for signup
 app.post("/signup", bodyparser.json(), function (req, res) {
     var sql = `INSERT INTO users(Firstname,Lastname,Dateofbirth,EmailAddress,Pass)
-     VALUES('${req.body.Firstname}',
-     '${req.body.Lastname}',
-     '${req.body.Dateofbirth}',
-     '${req.body.EmailAddress}',
-     '${req.body.Pass}')`;
+     VALUES('${req.body.Firstname}','${req.body.Lastname}','${req.body.Dateofbirth}','${req.body.EmailAddress}','${req.body.Pass}')`;
     con.query(sql, function (err, result) {
         if (err) throw err
         res.send(result);
@@ -39,6 +35,7 @@ const transporter = nodemailer.createTransport({
         pass: 'zceb znrq ajzh wszq'
     }
 });
+// creating an endpoint for sending an otp (one time password)
 app.post('/send-otps', bodyParser.json(), (req, res) => {
     const email = req.body.email;
     const otp = otpGenerator.generate(6);
@@ -66,10 +63,9 @@ app.get("/login", bodyparser.json(), function (req, res) {
      AND Pass ='${req.body.Pass}' `;
     con.query(sql, function (err, result) {
         if (err) throw err
-        res.status(status).send(body);
+        res.status(result);
     });
-});
-
+})
 //creating an endpoint for getuser ID
 app.get("/getuser/id", bodyParser.json(), function (req, res) {
     const sql = `SELECT id FROM users`
@@ -142,7 +138,7 @@ app.get('/posts/:post_id/like/count', function (req, res) {
 app.get('/TotalCommentCount/:postId', function (req, res) {
     var post_id = req.params.post_id;
     var sql = 'SELECT COUNT(*) as totalComments FROM comments WHERE post_id = ?';
-    connection.query(sql, [post_id], function (err, result) {
+    con.query(sql, [post_id], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
@@ -155,11 +151,10 @@ app.post("/messages/send", bodyParser.json(), function (req, res) {
     '${receiver_id}',
     '${message}')`;
     con.query(sql, [sender_id, receiver_id, message], function (err, result) {
-        if (err) throw err
+        if (err) throw err;
         res.send(result);
     });
-});
-
+})
 // providing an endpoint for retrieving chats between two users
 app.get('/get-messages/:sender_id/:receiver_id', bodyParser.json(), function (req, res) {
     const sender_id = req.params.sender_id;
@@ -170,6 +165,11 @@ app.get('/get-messages/:sender_id/:receiver_id', bodyParser.json(), function (re
         res.send(result);
     });
 })
-app.listen(3000), console.log("server is running at port 3000")
+app.listen(4000),
+    console.log("server is running at port 4000")
+// app.listen(4000, function() {
+//     console.log('Server is running on port 4000');
+//   });
+  
 
 
