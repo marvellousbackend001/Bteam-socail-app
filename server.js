@@ -35,19 +35,19 @@ const transporter = nodemailer.createTransport({
         pass: 'zceb znrq ajzh wszq'
     }
 });
-// creating an endpoint for sending an otp (one time password)
-app.post('/send-otps', bodyParser.json(), (req, res) => {
+// creating an endpoint for sending an otp (one time password),
+app.post("/send-otps", bodyParser.json(), (req, res) => {
     const email = req.body.email;
     const otp = otpGenerator.generate(6);
     const now = new Date();
-    const expirationTime = new Date(now.getTime() + 5 * 60000);
+    const expirationTime = new Date(now.getTime() + 6 * 60000);
     const sql = `INSERT INTO otps (email, otp, expiration_time) VALUES (?, ?, ?)`;
-    con.query(sql, [email, otp, expirationTime], function (err, result) {
+    con.query(sql, [email, otp, expirationTime], function (err, res) {
         if (err) throw err
         const mailOptions = {
-            from: 'kennedymarvellous001@gmail.com',
+            from: "kennedymarvellous001@gmail.com",
             to: email,
-            subject: 'Your OTP for Verification',
+            subject: "Your OTP for Verification",
             text: `Your OTP (One-Time Password) for verification is: ${otp}. It will expire at ${expirationTime}.`
         };
         transporter.sendMail(mailOptions, function (err, result) {
@@ -95,7 +95,7 @@ app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     });
 });
 // Endpoint for deleting a post by ID
-app.delete("/deletepost/:id", function (req, res) {
+app.delete("/deletepost/:id", bodyParser.json(), function (req, res) {
     const postid = req.params.id;
     const sql = `DELETE FROM posts WHERE id = '${postid}'`;
     con.query(sql, function (err, result) {
@@ -126,7 +126,7 @@ app.post('/posts/:post_id/like', bodyParser.json(), function (req, res) {
     });
 });
 //creating an endpoint for getting total like count 
-app.get('/posts/:post_id/like/count', function (req, res) {
+app.get('/posts/:post_id/like/count', bodyParser.json(), function (req, res) {
     const post_id = req.params.post_id;
     const sql = `SELECT COUNT (*) AS like_count FROM post_likes WHERE post_id = '${post_id}'`;
     con.query(sql, [post_id], function (err, result) {
@@ -135,7 +135,7 @@ app.get('/posts/:post_id/like/count', function (req, res) {
     });
 });
 //creating an endpoint for getting total comment count
-app.get('/TotalCommentCount/:postId', function (req, res) {
+app.get('/TotalCommentCount/:postId', bodyParser.json(), function (req, res) {
     var post_id = req.params.post_id;
     var sql = 'SELECT COUNT(*) as totalComments FROM comments WHERE post_id = ?';
     con.query(sql, [post_id], function (err, result) {
@@ -165,11 +165,36 @@ app.get('/get-messages/:sender_id/:receiver_id', bodyParser.json(), function (re
         res.send(result);
     });
 })
-app.listen(4000),
-    console.log("server is running at port 4000")
-// app.listen(4000, function() {
-//     console.log('Server is running on port 4000');
-//   });
-  
-
+// providing an endpoint for getting  both the like count and the comment count
+app.get("/posts/:post_id/counts", bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
+    const sql = ` SELECT (SELECT COUNT(*) FROM post_likes WHERE post_id = ?) AS like_count,
+            (SELECT COUNT(*) FROM comments WHERE post_id = ?) AS comment_count`;
+    con.query(sql, [post_id, post_id], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    })
+});
+//using JOIN method to provide  an endpoint for getting  both the like count and the comment count
+app.get("/posts/:post_id/like,comment/count", bodyParser.json(), function (req, res) {
+    const post_id = req.params.post_id;
+    const sql = `
+        SELECT 
+            COUNT(DISTINCT post_likes.user_id) AS like_count,
+            COUNT(DISTINCT comments.id) AS comment_count
+        FROM 
+            posts
+        LEFT JOIN 
+            post_likes ON posts.id = post_likes.post_id
+        LEFT JOIN 
+            comments ON posts.id = comments.post_id
+        WHERE 
+            posts.id = '${post_id}'`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+app.listen(4000)
+    , console.log("server is running at port 4000")
 
