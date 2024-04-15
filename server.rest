@@ -99,8 +99,8 @@ Content-Type: application/json
     "email":"praisdania@gmail.com"
 }
 
-### endpoint that retrieves both the like count and the comment count
-GET http://localhost:4000/posts
+### providing an endpoint for getting  both the like count and the comment count
+GET http://localhost:4000/posts/2/counts
 Content-Type: application/json
 
 ### using JOIN method to provide  an endpoint for getting  both the like count and the comment count
