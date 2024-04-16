@@ -3,11 +3,11 @@ POST http://localhost:4000/signup
 Content-Type: application/json
 
 {
- "Firstname":"ifeoluwa",
- "Lastname":"blessing",
- "Dateofbirth":"2002-10-06",
- "EmailAddress":"kene100@gmail.com",
- "Pass":"1234meclll" 
+ "Firstname":"udeh",
+ "Lastname":"marvellous",
+ "Dateofbirth":"2006-11-03",
+ "EmailAddress":"developermarvellous001@gmail.com",
+ "Pass":"kenny001" 
 }
 
 ### endpoint for login
@@ -20,7 +20,7 @@ Content-Type: application/json
 } 
 
 ### endpoint for getting usrs by id 
-GET http://localhost:4000/getuser/id
+GET http://localhost:4000/getuser/:id
 
 ### endpoint for creating posts
 POST http://localhost:4000/createpost/:2
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### endpoint for getting post by id 
-GET http://localhost:4000/getpost/:id
+GET http://localhost:4000/getpost/2
 
 ### endpoint for updating posts
 PUT http://localhost:4000/updatepost/2
@@ -71,7 +71,7 @@ Content-Type: application/json
 }
 
 ### endpoint for getting all like count by id 
-GET http://localhost:4000/posts/:post_id/like/count
+GET http://localhost:4000/posts/2/like/count
 Content-Type: application/json
 
 ### endpoint for getting all comment counts by id 
@@ -96,7 +96,7 @@ POST http://localhost:4000/send-otps
 Content-Type: application/json
 
 {
-    "email":"praisdania@gmail.com"
+    "email":"tomiwamonehin@gmail.com"
 }
 
 ### providing an endpoint for getting  both the like count and the comment count

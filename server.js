@@ -29,10 +29,10 @@ app.post("/signup", bodyparser.json(), function (req, res) {
 app.use(bodyParser.urlencoded
     ({ extended: true }));
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
-        user: 'kennedymarvellous001@gmail.com',
-        pass: 'zceb znrq ajzh wszq'
+        user: "kennedymarvellous001@gmail.com",
+        pass: "zceb znrq ajzh wszq"
     }
 });
 // creating an endpoint for sending an otp (one time password),
@@ -42,7 +42,7 @@ app.post("/send-otps", bodyParser.json(), (req, res) => {
     const now = new Date();
     const expirationTime = new Date(now.getTime() + 6 * 60000);
     const sql = `INSERT INTO otps (email, otp, expiration_time) VALUES (?, ?, ?)`;
-    con.query(sql, [email, otp, expirationTime], function (err, res) {
+    con.query(sql, [email, otp, expirationTime], function (err, result) {
         if (err) throw err
         const mailOptions = {
             from: "kennedymarvellous001@gmail.com",
@@ -51,7 +51,7 @@ app.post("/send-otps", bodyParser.json(), (req, res) => {
             text: `Your OTP (One-Time Password) for verification is: ${otp}. It will expire at ${expirationTime}.`
         };
         transporter.sendMail(mailOptions, function (err, result) {
-            if (err) throw err
+            if (err) throw err;
             res.send({ result, otp });
         })
     })
@@ -67,7 +67,7 @@ app.get("/login", bodyparser.json(), function (req, res) {
     });
 })
 //creating an endpoint for getuser ID
-app.get("/getuser/id", bodyParser.json(), function (req, res) {
+app.get("/getuser/:id", bodyParser.json(), function (req, res) {
     const sql = `SELECT id FROM users`
     con.query(sql, function (err, result) {
         if (err) throw err
@@ -91,6 +91,15 @@ app.put("/updatepost/:id", bodyParser.json(), function (req, res) {
     const sql = `UPDATE posts SET title = '${title}', content = '${content}' WHERE id = '${postid}'`;
     con.query(sql, [title, content, postid], function (err, result) {
         if (err) throw err
+        res.send(result);
+    });
+});
+// Endpoint for getting a post by ID
+app.get("/getpost/:id", function (req, res) {
+    const postid = req.params.id;
+    const sql = `SELECT * FROM posts WHERE id = '${postid}'`;
+    con.query(sql, function (err, result) {
+        if (err) throw err;
         res.send(result);
     });
 });
